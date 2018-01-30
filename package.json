@@ -1,0 +1,44 @@
+{
+  "name": "code-gov-api-client",
+  "version": "0.0.1",
+  "description": "Client for Interacting with Code.gov API",
+  "main": "build/index.js",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GSA/code-gov-api-client.git"
+  },
+  "keywords": [
+    "Open-Source",
+    "Government"
+  ],
+  "author": {
+    "name": "Code.gov Team",
+    "url": "https://code.gov",
+    "email": "code@gsa.gov"
+  },
+  "contributors": [
+    {
+      "name": "Daniel J. Dufour",
+      "url": "https://github.com/danieljdufour"
+    }
+  ],
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/GSA/code-gov-api-client/issues"
+  },
+  "homepage": "https://github.com/GSA/code-gov-api-client#readme",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "documentation": "^5.3.5",
+    "mocha": "^5.0.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "node-fetch": "^1.7.3"
+  }
+}
