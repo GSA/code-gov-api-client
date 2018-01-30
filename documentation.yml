@@ -1,0 +1,7 @@
+toc:
+ - name: class
+ - CodeGovAPIClient
+ - name: functions
+ - search
+ - getAgencyRepos
+ - getRepoByID
