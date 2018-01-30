@@ -17,11 +17,24 @@ import { CodeGovAPIClient } from "code-gov-api-client";
 let client = new CodeGovAPIClient();
 
 // get search results for "Space"
-let results = client.search("Space");
+client.search("Space").then(search_results => {
+  console.log("Agencies and repos related to space are ", search_results);
+});
+
+// get all agencies on code.government
+client.getAgencies().then(agencies => {
+  let count = agencies.length;
+  console.log("There are " + count + " agencies on code.gov");
+});
 
 // get all repositories by an Agency
-let repos = client.getAgencyRepos("SSA");
+client.getAgencyRepos("SSA").then(repositories => {
+  console.log("Social Security Agency has these repositories ", repositories);
+});
 
 // get information about a specific repository
-let repo = client.getRepoByID("nasa_dfrc_dthdata_armstrong_time_history_software_utility");
+let repo_id = "nasa_dfrc_dthdata_armstrong_time_history_software_utility";
+client.getRepoByID(repo_id).then(repository => {
+  console.log("Repository information is ", repository);
+});
 ```
