@@ -1,6 +1,6 @@
 {
   "name": "@code.gov/code-gov-api-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Client for Interacting with Code.gov API",
   "main": "build/index.js",
   "types": "src/index.ts",
