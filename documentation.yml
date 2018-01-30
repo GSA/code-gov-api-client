@@ -3,5 +3,6 @@ toc:
  - CodeGovAPIClient
  - name: functions
  - search
+ - getAgencies
  - getAgencyRepos
  - getRepoByID
