@@ -12,7 +12,7 @@ export class CodeGovAPIClient {
 
     if (options.BASE) {
       this.BASE = options.BASE;
-    } else if (options.environment = "local"){
+    } else if (options.environment == "local"){
       this.BASE = 'http://localhost:3001/api/0.1/'
     } else {
       this.BASE = 'https://code-api.app.cloud.gov/api/0.1/';
@@ -21,6 +21,21 @@ export class CodeGovAPIClient {
     if (this.DEBUG) console.log("this.BASE:", this.BASE);
   }
 
+  /**
+  * This function gets all the agencies on code.gov
+  * @name getAgencies
+  * @returns {Object} array of agencies
+  * @example
+  * client.getAgencies().then(agencies => {
+  *   let count = agencies.length;
+  *   console.log("There are " + count + " agencies on code.gov");
+  * });
+  */
+  getAgencies(){
+    return fetch(this.BASE + "agencies")
+      .then(response => response.json())
+      .then(data => data.agencies);
+  }
 
   /**
   * This function gets all the repositories
@@ -37,6 +52,11 @@ export class CodeGovAPIClient {
   * });
   */
   getAgencyRepos(agency_id="", limit=10){
+    /*
+      - filter by repo.agency = agency.id (I think agency.id is like SSA or GSA but I have to double check)
+      - permissions.usageType is "openSource" or "governmentWideReuse"
+      - sort alphabetically
+    */
     let url = this.BASE + `repos?agency.acronym=${agency_id}&size=${limit}`;
     if (this.DEBUG) console.log("getAgencyRepos: url:", url);
     return fetch(url)

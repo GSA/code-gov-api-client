@@ -6,7 +6,7 @@ Client for Interacting with Code.gov API
 
 # installation
 ```
-npm install code-gov-api-client;
+npm install '@code.gov/code-gov-api-client';
 ```
 
 # usage
