@@ -1,18 +1,24 @@
 import * as fetch from "node-fetch";
 
+interface Options {
+  base?: string;
+  debug?: boolean;
+  environment?: string;
+}
+
 export class CodeGovAPIClient {
 
   private BASE : string;
   private DEBUG : boolean;
 
-  constructor(options){
+  constructor(options: Options){
     console.log("constructing CodeGovAPIClient");
 
-    this.DEBUG = options.debug || false;
+    this.DEBUG = options && options.debug || false;
 
-    if (options.BASE) {
-      this.BASE = options.BASE;
-    } else if (options.environment == "local"){
+    if (options && options.base) {
+      this.BASE = options.base;
+    } else if (options && options.environment == "local"){
       this.BASE = 'http://localhost:3001/api/0.1/'
     } else {
       this.BASE = 'https://code-api.app.cloud.gov/api/0.1/';
@@ -96,11 +102,33 @@ export class CodeGovAPIClient {
    * });
    */
   search(term="", limit=10) {
-    let url = this.BASE + `terms?term=${term}&size=${limit}&term_type=agency.acronym&term_type=agency.name`;
-    if (this.DEBUG) console.log("getAgencyRepos: url:", url);
-    return fetch(url)
-      .then(response => response.json())
-      .then(data => data.terms);
+    if (term && term.length > 2) {
+      let url = this.BASE + `terms?term=${term}&size=${limit}&term_type=agency.acronym&term_type=agency.name`;
+      if (this.DEBUG) console.log("getAgencyRepos: url:", url);
+      return fetch(url)
+        .then(response => response.json())
+        .then(data => data.terms);
+    } else {
+      return Promise.resolve([]);
+    }
   }
 
+  /**
+   * This function searches all of the repositories
+   * based on a string of text.
+   * @function
+   * @name search
+   * @param {string} text - the text to search by
+   * @returns {Object} array of search result repos
+   * client.searchRepos("services").then(repos => {
+   *   console.log("Repos related to services are", repos);
+   * });
+   */
+   searchRepos(text="", limit=10) {
+     if (text && text.length > 0) {
+       let url = this.BASE + `repos?_fulltext=${text}&size=${limit}`;
+       if (this.DEBUG) console.log("result repos:", url);
+       return fetch(url).then(response => response.json());
+     }
+   }
 }

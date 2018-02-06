@@ -4,11 +4,11 @@ var fetch = require("node-fetch");
 var CodeGovAPIClient = /** @class */ (function () {
     function CodeGovAPIClient(options) {
         console.log("constructing CodeGovAPIClient");
-        this.DEBUG = options.debug || false;
-        if (options.BASE) {
-            this.BASE = options.BASE;
+        this.DEBUG = options && options.debug || false;
+        if (options && options.base) {
+            this.BASE = options.base;
         }
-        else if (options.environment == "local") {
+        else if (options && options.environment == "local") {
             this.BASE = 'http://localhost:3001/api/0.1/';
         }
         else {
@@ -95,12 +95,38 @@ var CodeGovAPIClient = /** @class */ (function () {
     CodeGovAPIClient.prototype.search = function (term, limit) {
         if (term === void 0) { term = ""; }
         if (limit === void 0) { limit = 10; }
-        var url = this.BASE + ("terms?term=" + term + "&size=" + limit + "&term_type=agency.acronym&term_type=agency.name");
-        if (this.DEBUG)
-            console.log("getAgencyRepos: url:", url);
-        return fetch(url)
-            .then(function (response) { return response.json(); })
-            .then(function (data) { return data.terms; });
+        if (term && term.length > 2) {
+            var url = this.BASE + ("terms?term=" + term + "&size=" + limit + "&term_type=agency.acronym&term_type=agency.name");
+            if (this.DEBUG)
+                console.log("getAgencyRepos: url:", url);
+            return fetch(url)
+                .then(function (response) { return response.json(); })
+                .then(function (data) { return data.terms; });
+        }
+        else {
+            return Promise.resolve([]);
+        }
+    };
+    /**
+     * This function searches all of the repositories
+     * based on a string of text.
+     * @function
+     * @name search
+     * @param {string} text - the text to search by
+     * @returns {Object} array of search result repos
+     * client.searchRepos("services").then(repos => {
+     *   console.log("Repos related to services are", repos);
+     * });
+     */
+    CodeGovAPIClient.prototype.searchRepos = function (text, limit) {
+        if (text === void 0) { text = ""; }
+        if (limit === void 0) { limit = 10; }
+        if (text && text.length > 0) {
+            var url = this.BASE + ("repos?_fulltext=" + text + "&size=" + limit);
+            if (this.DEBUG)
+                console.log("result repos:", url);
+            return fetch(url).then(function (response) { return response.json(); });
+        }
     };
     return CodeGovAPIClient;
 }());
