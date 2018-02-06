@@ -6,12 +6,15 @@ Client for Interacting with Code.gov API
 
 # installation
 ```
-npm install '@code.gov/code-gov-api-client';
+npm install '@code.gov/api-client';
 ```
+
+# docs
+https://gsa.github.io/code-gov-api-client/
 
 # usage
 ```
-import { CodeGovAPIClient } from "code-gov-api-client";
+import { CodeGovAPIClient } from "@code.gov/api-client";
 
 // initialize client
 let client = new CodeGovAPIClient();
