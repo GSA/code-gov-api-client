@@ -4,7 +4,7 @@ let CodeGovAPIClient = require("../build/index.js").CodeGovAPIClient;
 console.log("CodeGovAPIClient:", CodeGovAPIClient);
 
 let client = new CodeGovAPIClient({
-  environment: "local",
+  environment: "staging",
   debug: true
 });
 
@@ -13,9 +13,10 @@ describe('Getting Information', function() {
   describe('Searching', function() {
     it('should get search results for National', function(done) {
         this.timeout(50000);
-        client.search("National").then(search_results => {
+        client.suggest("National").then(search_results => {
           console.log("search_results:", search_results);
           expect(search_results.length).to.be.above(2);
+          expect(search_results[0].term.toLowerCase()).to.have.string('national');
           done();
         });
     });
@@ -34,7 +35,7 @@ describe('Getting Information', function() {
   describe("Getting Individual Repositories", function() {
     it("should get correct result", function(done) {
       this.timeout(50000);
-      let repo_id = "nasa_dfrc_dthdata_armstrong_time_history_software_utility";
+      let repo_id = "cfpb_new_clouseau_";
       client.getRepoByID(repo_id).then(repo => {
         console.log("repo", repo);
         done();
