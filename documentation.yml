@@ -2,7 +2,8 @@ toc:
  - name: class
  - CodeGovAPIClient
  - name: functions
- - search
  - getAgencies
  - getAgencyRepos
  - getRepoByID
+ - search
+ - suggest

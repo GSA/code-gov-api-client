@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>@code.gov/code-gov-api-client 0.0.2 | Documentation</title>
+  <title>@code.gov/api-client 0.0.3 | Documentation</title>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' type='text/css' rel='stylesheet' />
   <link href='assets/style.css' type='text/css' rel='stylesheet' />
@@ -13,8 +13,8 @@
     <div class='flex'>
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
-          <h3 class='mb0 no-anchor'>@code.gov/code-gov-api-client</h3>
-          <div class='mb1'><code>0.0.2</code></div>
+          <h3 class='mb0 no-anchor'>@code.gov/api-client</h3>
+          <div class='mb1'><code>0.0.3</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -55,26 +55,6 @@
               
                 
                 <li><a
-                  href='#search'
-                  class="">
-                  search
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#search'
-                  class="">
-                  search
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
                   href='#getagencies'
                   class="">
                   getAgencies
@@ -98,6 +78,26 @@
                   href='#getrepobyid'
                   class="">
                   getRepoByID
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#search'
+                  class="">
+                  search
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#suggest'
+                  class="">
+                  suggest
                   
                 </a>
                 
@@ -186,168 +186,6 @@
   
 </section>
 </div>
-          
-        
-          
-            <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='search'>
-      search
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>The search function takes in a search term that is searches by.
-It searches both agencies and repositories.
-It is used by the search boxes on code.gov.</p>
-
-
-  <div class='pre p1 fill-light mt0'>search(term: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, limt: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>term</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    the term to search by
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>limt</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-            = <code>10</code>)</code>
-	    the number of search results to return
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
-        array of search result objects
-
-      
-    
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Example</div>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'>client.search(<span class="hljs-string">"Space"</span>).then(<span class="hljs-function"><span class="hljs-params">search_results</span> =&gt;</span> {
-  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Agencies and repos related to space are "</span>, search_results);
-});</pre>
-    
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-            <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='search'>
-      search
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>This function searches all of the repositories
-based on a string of text.</p>
-
-
-  <div class='pre p1 fill-light mt0'>search(text: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>text</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    the text to search by
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
-        array of search result repos
-client.searchRepos("services").then(repos => {
-console.log("Repos related to services are", repos);
-});
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
           
         
           
@@ -460,7 +298,7 @@ It is used to explore on code.gov.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>limt</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+            <span class='code bold'>size</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
             = <code>10</code>)</code>
 	    the number of search results to return
 
@@ -570,6 +408,168 @@ It is used on the project details page of code.gov.</p>
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">let</span> repo_id = <span class="hljs-string">"nasa_dfrc_dthdata_armstrong_time_history_software_utility"</span>;
 client.getRepoByID(repo_id).then(<span class="hljs-function"><span class="hljs-params">repository</span> =&gt;</span> {
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Repository information is "</span>, repository);
+});</pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='search'>
+      search
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This function searches all of the repositories
+based on a string of text.</p>
+
+
+  <div class='pre p1 fill-light mt0'>search(text: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>text</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    the text to search by
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
+        array of search result repos
+client.search("services").then(repos => {
+console.log("Repos related to services are", repos);
+});
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='suggest'>
+      suggest
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>The suggest function takes in a search term then
+returns auto-complete / type-ahead suggestions.
+It is used by the search boxes on code.gov.</p>
+
+
+  <div class='pre p1 fill-light mt0'>suggest(term: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, size: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>term</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    the term to search by
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>size</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+            = <code>10</code>)</code>
+	    the number of search results to return
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
+        array of search result objects
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'>client.suggest(<span class="hljs-string">"space"</span>).then(<span class="hljs-function"><span class="hljs-params">terms</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Terms that are related to space"</span>, terms);
 });</pre>
     
   

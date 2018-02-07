@@ -19,7 +19,9 @@ export class CodeGovAPIClient {
     if (options && options.base) {
       this.BASE = options.base;
     } else if (options && options.environment == "local"){
-      this.BASE = 'http://localhost:3001/api/0.1/'
+      this.BASE = 'http://localhost:3001/api/0.1/';
+    } else if (options && options.environment == "staging"){
+      this.BASE = 'https://code-api-staging.app.cloud.gov/api/0.1/';
     } else {
       this.BASE = 'https://code-api.app.cloud.gov/api/0.1/';
     }
@@ -50,20 +52,18 @@ export class CodeGovAPIClient {
   * It is used to explore on code.gov.
   * @name getAgencyRepos
   * @param {string} agency_id - the agency acronymn
-  * @param {number} [limt=10] - the number of search results to return
+  * @param {number} [size=10] - the number of search results to return
   * @returns {Object} array of repositories
   * @example
   * client.getAgencyRepos("SSA").then(repositories => {
   *   console.log("Social Security Agency has these repositories ", repositories);
   * });
   */
-  getAgencyRepos(agency_id="", limit=10){
+  getAgencyRepos(agency_id="", size=10){
     /*
-      - filter by repo.agency = agency.id (I think agency.id is like SSA or GSA but I have to double check)
       - permissions.usageType is "openSource" or "governmentWideReuse"
-      - sort alphabetically
     */
-    let url = this.BASE + `repos?agency.acronym=${agency_id}&size=${limit}`;
+    let url = this.BASE + `repos?agency.acronym=${agency_id}&size=${size}&sort=name__asc`;
     if (this.DEBUG) console.log("getAgencyRepos: url:", url);
     return fetch(url)
       .then(response => response.json())
@@ -88,22 +88,22 @@ export class CodeGovAPIClient {
   }
 
   /**
-   * The search function takes in a search term that is searches by.
-   * It searches both agencies and repositories.
+   * The suggest function takes in a search term then
+   * returns auto-complete / type-ahead suggestions.
    * It is used by the search boxes on code.gov.
    * @function
-   * @name search
+   * @name suggest
    * @param {string} term - the term to search by
-   * @param {number} [limt=10] - the number of search results to return
+   * @param {number} [size=10] - the number of search results to return
    * @returns {Object} array of search result objects
    * @example
-   * client.search("Space").then(search_results => {
-   *   console.log("Agencies and repos related to space are ", search_results);
+   * client.suggest("space").then(terms => {
+   *   console.log("Terms that are related to space", terms);
    * });
    */
-  search(term="", limit=10) {
+  suggest(term="", size=10) {
     if (term && term.length > 2) {
-      let url = this.BASE + `terms?term=${term}&size=${limit}&term_type=agency.acronym&term_type=agency.name`;
+      let url = this.BASE + `terms?_fulltext=${term}&size=${size}`;
       if (this.DEBUG) console.log("getAgencyRepos: url:", url);
       return fetch(url)
         .then(response => response.json())
@@ -120,15 +120,16 @@ export class CodeGovAPIClient {
    * @name search
    * @param {string} text - the text to search by
    * @returns {Object} array of search result repos
-   * client.searchRepos("services").then(repos => {
+   * client.search("services").then(repos => {
    *   console.log("Repos related to services are", repos);
    * });
    */
-   searchRepos(text="", limit=10) {
+   search(text="", size=10) {
      if (text && text.length > 0) {
-       let url = this.BASE + `repos?_fulltext=${text}&size=${limit}`;
+       let url = this.BASE + `repos?q=${text}&size=${size}`;
        if (this.DEBUG) console.log("result repos:", url);
        return fetch(url).then(response => response.json());
      }
    }
+
 }

@@ -11,6 +11,9 @@ var CodeGovAPIClient = /** @class */ (function () {
         else if (options && options.environment == "local") {
             this.BASE = 'http://localhost:3001/api/0.1/';
         }
+        else if (options && options.environment == "staging") {
+            this.BASE = 'https://code-api-staging.app.cloud.gov/api/0.1/';
+        }
         else {
             this.BASE = 'https://code-api.app.cloud.gov/api/0.1/';
         }
@@ -39,22 +42,20 @@ var CodeGovAPIClient = /** @class */ (function () {
     * It is used to explore on code.gov.
     * @name getAgencyRepos
     * @param {string} agency_id - the agency acronymn
-    * @param {number} [limt=10] - the number of search results to return
+    * @param {number} [size=10] - the number of search results to return
     * @returns {Object} array of repositories
     * @example
     * client.getAgencyRepos("SSA").then(repositories => {
     *   console.log("Social Security Agency has these repositories ", repositories);
     * });
     */
-    CodeGovAPIClient.prototype.getAgencyRepos = function (agency_id, limit) {
+    CodeGovAPIClient.prototype.getAgencyRepos = function (agency_id, size) {
         if (agency_id === void 0) { agency_id = ""; }
-        if (limit === void 0) { limit = 10; }
+        if (size === void 0) { size = 10; }
         /*
-          - filter by repo.agency = agency.id (I think agency.id is like SSA or GSA but I have to double check)
           - permissions.usageType is "openSource" or "governmentWideReuse"
-          - sort alphabetically
         */
-        var url = this.BASE + ("repos?agency.acronym=" + agency_id + "&size=" + limit);
+        var url = this.BASE + ("repos?agency.acronym=" + agency_id + "&size=" + size + "&sort=name__asc");
         if (this.DEBUG)
             console.log("getAgencyRepos: url:", url);
         return fetch(url)
@@ -79,24 +80,24 @@ var CodeGovAPIClient = /** @class */ (function () {
         return fetch(url).then(function (response) { return response.json(); });
     };
     /**
-     * The search function takes in a search term that is searches by.
-     * It searches both agencies and repositories.
+     * The suggest function takes in a search term then
+     * returns auto-complete / type-ahead suggestions.
      * It is used by the search boxes on code.gov.
      * @function
-     * @name search
+     * @name suggest
      * @param {string} term - the term to search by
-     * @param {number} [limt=10] - the number of search results to return
+     * @param {number} [size=10] - the number of search results to return
      * @returns {Object} array of search result objects
      * @example
-     * client.search("Space").then(search_results => {
-     *   console.log("Agencies and repos related to space are ", search_results);
+     * client.suggest("space").then(terms => {
+     *   console.log("Terms that are related to space", terms);
      * });
      */
-    CodeGovAPIClient.prototype.search = function (term, limit) {
+    CodeGovAPIClient.prototype.suggest = function (term, size) {
         if (term === void 0) { term = ""; }
-        if (limit === void 0) { limit = 10; }
+        if (size === void 0) { size = 10; }
         if (term && term.length > 2) {
-            var url = this.BASE + ("terms?term=" + term + "&size=" + limit + "&term_type=agency.acronym&term_type=agency.name");
+            var url = this.BASE + ("terms?_fulltext=" + term + "&size=" + size);
             if (this.DEBUG)
                 console.log("getAgencyRepos: url:", url);
             return fetch(url)
@@ -114,15 +115,15 @@ var CodeGovAPIClient = /** @class */ (function () {
      * @name search
      * @param {string} text - the text to search by
      * @returns {Object} array of search result repos
-     * client.searchRepos("services").then(repos => {
+     * client.search("services").then(repos => {
      *   console.log("Repos related to services are", repos);
      * });
      */
-    CodeGovAPIClient.prototype.searchRepos = function (text, limit) {
+    CodeGovAPIClient.prototype.search = function (text, size) {
         if (text === void 0) { text = ""; }
-        if (limit === void 0) { limit = 10; }
+        if (size === void 0) { size = 10; }
         if (text && text.length > 0) {
-            var url = this.BASE + ("repos?_fulltext=" + text + "&size=" + limit);
+            var url = this.BASE + ("repos?q=" + text + "&size=" + size);
             if (this.DEBUG)
                 console.log("result repos:", url);
             return fetch(url).then(function (response) { return response.json(); });
