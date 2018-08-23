@@ -27,7 +27,7 @@ export class CodeGovAPIClient {
     } else if (options && options.environment == "staging"){
       this.BASE = 'https://code-api-staging.app.cloud.gov/api/0.1/';
     } else {
-      this.BASE = 'https://code-api.app.cloud.gov/api/0.1/';
+      this.BASE = 'https://api.code.gov/';
     }
 
     if (this.DEBUG) console.log("this.BASE:", this.BASE);
