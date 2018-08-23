@@ -135,4 +135,20 @@ export class CodeGovAPIClient {
        return fetch(url).then(response => response.json());
      }
    }
+  
+   /**
+   * This function lists all of the projects known to code.gov.
+   * @function
+   * @name listAll
+   * @param {number} size - the max number of repositories to return
+   * @returns {Object} array of result repos
+   * client.listAll.then(repos => {
+   *   console.log("All projects known are", repos);
+   * });
+   */
+  listAll(size=10) {
+       let url = this.BASE + `repos?size=${size}&api_key={this.API_KEY}`;
+       if (this.DEBUG) console.log("get all repos url:", url);
+       return fetch(url).then(response => response.json());
+   }
 }
