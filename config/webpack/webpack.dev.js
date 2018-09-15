@@ -3,6 +3,8 @@ const merge = require('webpack-merge');
 const path = require('path');
 const shared = require('./webpack.shared');
 
+const rootDir = path.dirname(path.dirname(__dirname));
+
 const dev = {
   mode: 'development',
   devtool: 'cheap-module-eval-source-map',
@@ -13,7 +15,7 @@ const dev = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.join(path.dirname(__dirname), 'dist'),
+    path: path.join(rootDir, 'dist'),
     publicPath: '/'
   },
   plugins: [
