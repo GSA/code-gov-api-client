@@ -5,8 +5,9 @@
   "main": "build/index.js",
   "types": "src/index.ts",
   "scripts": {
-    "build": "tsc",
-    "build-docs": "tsc && documentation build build/index.js --config documentation.yml -f html -o docs",
+    "build": "node ./node_modules/webpack/bin/webpack.js --config ./config/webpack/webpack.prod.js",
+    "build-docs": "documentation build src/index.js --config documentation.yml -f html -o docs",
+    "lint": "node_modules/eslint/bin/eslint.js src",
     "test": "tsc && ./node_modules/.bin/mocha --reporter spec"
   },
   "repository": {
@@ -34,13 +35,27 @@
   },
   "homepage": "https://github.com/GSA/code-gov-api-client#readme",
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "chai": "^4.1.2",
+    "clean-webpack-plugin": "^0.1.19",
+    "cname-webpack-plugin": "^1.0.3",
+    "copy-webpack-plugin": "^4.5.2",
     "documentation": "^5.3.5",
+    "eslint": "^5.5.0",
     "http-server": "^0.11.1",
     "mocha": "^5.0.0",
-    "typescript": "^2.6.2"
+    "webpack": "^4.19.0",
+    "webpack-bundle-analyzer": "^3.0.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.8",
+    "webpack-merge": "^4.1.4"
   },
   "dependencies": {
-    "node-fetch": "^1.7.3"
+    "node-fetch": "^2.2.0"
   }
 }

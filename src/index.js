@@ -1,32 +1,19 @@
-import * as fetch from "node-fetch";
+import fetch from 'node-fetch';
 
-interface Options {
-  base?: string;
-  debug?: boolean;
-  environment?: string;
-}
+export default class CodeGovAPIClient {
 
-export class CodeGovAPIClient {
-
-  private BASE : string;
-  private DEBUG : boolean;
-
-  constructor(options: Options){
-    console.log("constructing CodeGovAPIClient");
-
-    this.DEBUG = options && options.debug || false;
-
-    if (options && options.base) {
-      this.BASE = options.base;
-    } else if (options && options.environment == "local"){
-      this.BASE = 'http://localhost:3001/api/0.1/';
-    } else if (options && options.environment == "staging"){
-      this.BASE = 'https://code-api-staging.app.cloud.gov/api/0.1/';
-    } else {
-      this.BASE = 'https://code-api.app.cloud.gov/api/0.1/';
-    }
-
-    if (this.DEBUG) console.log("this.BASE:", this.BASE);
+  constructor (options={}){
+    console.log('constructing CodeGovAPIClient');
+    
+    this.base = options.base || 'https://api.code.gov/';
+    this.debug = options.debug || false;
+    this.key = options.key || null;
+    
+    ['base', 'debug', 'key'].forEach(key => {
+      if (options.has(key)) {
+        this[key] = options[key];
+      }
+    });
   }
 
   /**
@@ -39,8 +26,8 @@ export class CodeGovAPIClient {
   *   console.log("There are " + count + " agencies on code.gov");
   * });
   */
-  getAgencies(){
-    return fetch(this.BASE + "agencies")
+  getAgencies () {
+    return fetch(`${this.base}agencies`)
       .then(response => response.json())
       .then(data => data.agencies);
   }
@@ -51,7 +38,7 @@ export class CodeGovAPIClient {
   * open-source or government wide reuse.
   * It is used to explore on code.gov.
   * @name getAgencyRepos
-  * @param {string} agency_id - the agency acronymn
+  * @param {string} agencyId - the agency acronymn
   * @param {number} [size=10] - the number of search results to return
   * @returns {Object} array of repositories
   * @example
@@ -59,12 +46,12 @@ export class CodeGovAPIClient {
   *   console.log("Social Security Agency has these repositories ", repositories);
   * });
   */
-  getAgencyRepos(agency_id="", size=10){
+  getAgencyRepos (agencyId='', size=10){
     /*
       - permissions.usageType is "openSource" or "governmentWideReuse"
     */
-    let url = this.BASE + `repos?agency.acronym=${agency_id}&size=${size}&sort=name__asc`;
-    if (this.DEBUG) console.log("getAgencyRepos: url:", url);
+    const url = `${this.base}repos?agency.acronym=${agencyId}&size=${size}&sort=name__asc`;
+    if (this.DEBUG) console.log('getAgencyRepos: url:', url);
     return fetch(url)
       .then(response => response.json())
       .then(data => data.repos);
@@ -73,17 +60,17 @@ export class CodeGovAPIClient {
   /**
   * This function gets a repository by its id
   * It is used on the project details page of code.gov.
-  * @name getRepoByID
-  * @param {string} repo_id - the agency acronymn
+  * @name getRepoById
+  * @param {string} repoId - the agency acronymn
   * @returns {Object} repository - object that holds information about repo
   * @example
-  * let repo_id = "nasa_dfrc_dthdata_armstrong_time_history_software_utility";
-  * client.getRepoByID(repo_id).then(repository => {
+  * let repoId = "nasa_dfrc_dthdata_armstrong_time_history_software_utility";
+  * client.getRepoByID(repoId).then(repository => {
   *   console.log("Repository information is ", repository);
   * });
   */
-  getRepoByID(repo_id="") {
-    let url = this.BASE + `repos/${repo_id}`;
+  getRepoById (repoId='') {
+    const url = `${this.base}repos/${repoId}`;
     return fetch(url).then(response => response.json());
   }
 
@@ -101,10 +88,9 @@ export class CodeGovAPIClient {
    *   console.log("Terms that are related to space", terms);
    * });
    */
-  suggest(term="", size=10) {
+  suggest (term='', size=10) {
     if (term && term.length > 2) {
-      let url = this.BASE + `terms?_fulltext=${term}&size=${size}`;
-      if (this.DEBUG) console.log("getAgencyRepos: url:", url);
+      const url = `${this.base}terms?_fulltext=${term}&size=${size}`;
       return fetch(url)
         .then(response => response.json())
         .then(data => data.terms);
@@ -124,12 +110,12 @@ export class CodeGovAPIClient {
    *   console.log("Repos related to services are", repos);
    * });
    */
-   search(text="", size=10) {
-     if (text && text.length > 0) {
-       let url = this.BASE + `repos?q=${text}&size=${size}`;
-       if (this.DEBUG) console.log("result repos:", url);
-       return fetch(url).then(response => response.json());
-     }
-   }
+  search (text='', size=10) {
+    if (text && text.length > 0) {
+      const url = `{this.base}repos?q=${text}&size=${size}`;
+      if (this.DEBUG) console.log('search:', url);
+      return fetch(url).then(response => response.json());
+    }
+  }
 
 }
