@@ -1,68 +1,44 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/code-gov
     docker:
       - image: circleci/node:6.12.2-stretch
     steps:
       - checkout
       - run:
-          name: Add Node Module's bin to PATH
-          command: echo "export PATH=`pwd`/node_modules/.bin:$PATH" >> $BASH_ENV
-      - restore_cache:
-          key: code-gov-api-client-{{ checksum "package.json" }}
-      - run:
           name: Install Dependencies
           command: npm install
-      - save_cache:
-          key: code-gov-api-client-{{ checksum "package.json" }}
-          paths:
-            - code-gov-api-client/node_modules
       - run:
-          name: Run Linter
+          name: Build
+          command: npm run build
+  lint:
+    docker:
+      - image: circleci/node:6.12.2-stretch
+    steps:
+      - checkout
+      - run:
+          name: Check Syntax
           command: npm run lint
   test:
-    working_directory: ~/code-gov
     docker:
       - image: circleci/node:6.12.2-stretch
     steps:
       - checkout
       - run:
-          name: download-cc-test-reporter
-          command: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      - run: 
-          name: make-test-reporter-executable
-          command: chmod +x ./cc-test-reporter
-      - run:
-          name: code-climate-before-build
-          command: |
-              ./cc-test-reporter before-build
-      - restore_cache:
-          key: code-gov-api-client-{{ checksum "package.json" }}
-      - run:
           name: Install Dependencies
           command: npm install
-      - save_cache:
-          key: code-gov-api-client-{{ checksum "package.json" }}
-          paths:
-            - code-gov-api-client/node_modules
       - run:
           name: Run Tests
           command: npm test
-      - run:
-          name: upload-test-report
-          command: |
-             ./cc-test-reporter after-build -t lcov --exit-code $?
-      - store_test_results:
-          path: test-results.xml
-      - store_artifacts:
-          path: coverage
-          prefix: coverage
 workflows:
   version: 2
   build-test-deploy:
     jobs:
       - build
+      - lint:
+          requires:
+            - build
       - test:
           requires: 
             - build
+            - lint
