@@ -1,11 +1,11 @@
 const fetch = require('node-fetch')
 
-function overlaps (array1, array2) {
+function overlaps(array1, array2) {
   return array1.some(item => array2.includes(item))
 }
 
 class CodeGovAPIClient {
-  constructor (options = {}) {
+  constructor(options = {}) {
     console.log('constructing CodeGovAPIClient with this', this)
 
     this.base = options.base || 'https://api.code.gov/'
@@ -14,7 +14,8 @@ class CodeGovAPIClient {
 
     if (options.api_key) {
       this.api_key = options.api_key
-    } else {
+    }
+    else {
       console.log('[code-gov-api-client] You did not specify an API Key.  You will not be able to access api.code.gov without a key.')
       this.api_key = null
     }
@@ -36,7 +37,7 @@ class CodeGovAPIClient {
    *   console.log("There are " + count + " agencies on code.gov");
    * });
    */
-  getAgencies (size = 10) {
+  getAgencies(size = 10) {
     return fetch(`${this.base}agencies?api_key=${this.api_key}&size=${size}`)
       .then(response => response.json())
       .then(data => data.agencies)
@@ -56,7 +57,7 @@ class CodeGovAPIClient {
    *   console.log("Social Security Agency has these repositories ", repositories);
    * });
    */
-  getAgencyRepos (agencyId = '', size = 10) {
+  getAgencyRepos(agencyId = '', size = 10) {
     const filters = { agencies: [agencyId], size }
     return this.repos(filters)
   }
@@ -73,7 +74,7 @@ class CodeGovAPIClient {
    *   console.log("Repository information is ", repository);
    * });
    */
-  getRepoById (repoId = '') {
+  getRepoById(repoId = '') {
     const url = `${this.base}repos/${repoId}`
     return fetch(url).then(response => response.json())
   }
@@ -92,7 +93,7 @@ class CodeGovAPIClient {
    *   console.log("Terms that are related to space", terms);
    * });
    */
-  suggest (term = '', size = 10) {
+  suggest(term = '', size = 10) {
     if (term && term.length > 2) {
       let url = `${this.base}terms?term=${term}&size=${size}`
       if (this.api_key) url += `&api_key=${this.api_key}`
@@ -100,12 +101,13 @@ class CodeGovAPIClient {
       return fetch(url)
         .then(response => response.json())
         .then(data => data.terms)
-    } else {
+    }
+    else {
       return Promise.resolve([])
     }
   }
 
-  repos (params) {
+  repos(params) {
     const { agencies, languages, licenses, q, size } = params
     const usageTypes = params.usageTypes || this.usageTypes
 
@@ -170,7 +172,7 @@ class CodeGovAPIClient {
    *   console.log("Repos related to services are", repos);
    * });
    */
-  search (text = '', filters = {}, size = 100) {
+  search(text = '', filters = {}, size = 100) {
     if (text && text.length > 0) {
       const params = { ...filters, q: text, size }
       return this.repos(params)
