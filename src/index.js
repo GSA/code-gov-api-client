@@ -28,7 +28,7 @@ class CodeGovAPIClient {
   }
 
   /**
-   * This function gets all the agencies on code.gov
+   * This function gets agencies on code.gov, sorted by name
    * @name getAgencies
    * @returns {Object} array of agencies
    * @example
@@ -41,6 +41,9 @@ class CodeGovAPIClient {
     return fetch(`${this.base}agencies?api_key=${this.api_key}&size=${size}`)
       .then(response => response.json())
       .then(data => data.agencies)
+      .then(agencies => agencies.sort((a, b) => {
+        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+      }))
   }
 
   /**
