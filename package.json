@@ -1,11 +1,10 @@
 {
   "name": "@code.gov/api-client",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Client for Interacting with Code.gov API",
   "main": "dist/bundle.js",
   "scripts": {
     "build": "node ./node_modules/webpack/bin/webpack.js --config ./config/webpack/webpack.prod.js",
-    "build-without-babel-polyfill": "node ./node_modules/webpack/bin/webpack.js --config ./config/webpack/webpack.prod-without-babel-polyfill.js",
     "build-docs": "documentation build src/index.js --config documentation.yml -f html -o docs",
     "lint": "node_modules/eslint/bin/eslint.js src",
     "fix-lint": "node_modules/eslint/bin/eslint.js --fix src",

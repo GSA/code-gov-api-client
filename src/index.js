@@ -144,7 +144,7 @@ class CodeGovAPIClient {
       .then(response => response.json())
       .then(data => {
         console.log('data:', data)
-        if (Array.isArray(licenses)) {
+        if (Array.isArray(licenses) && licenses.length > 0) {
           data.repos = data.repos.filter(repo => {
             console.log('repo:', repo)
             if (repo.permissions) {
