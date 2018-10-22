@@ -1,8 +1,5 @@
 const fetch = require('node-fetch')
-
-function overlaps(array1, array2) {
-  return array1.some(item => array2.includes(item))
-}
+const { overlaps, some } = require('@code.gov/cautious')
 
 class CodeGovAPIClient {
   constructor(options = {}) {
@@ -16,7 +13,7 @@ class CodeGovAPIClient {
       this.api_key = options.api_key
     }
     else {
-      console.log('[code-gov-api-client] You did not specify an API Key.  You will not be able to access api.code.gov without a key.')
+      console.log('[code-gov-api-client] You did not specify an API Key.  You will not be able to access api.code.gov without a key.  Get one at https://developers.code.gov/key.html.')
       this.api_key = null
     }
 
@@ -111,57 +108,49 @@ class CodeGovAPIClient {
   }
 
   repos(params) {
-    const { agencies, languages, licenses, q, size } = params
+    const { agencies, from, languages, licenses, q, size } = params
     const usageTypes = params.usageTypes || this.usageTypes
 
     let url = `${this.base}repos?size=${size}&api_key=${this.api_key}`
+
+    if (from && from.length > 0) {
+      url += `&from=${from}`
+    }
 
     if (q && q.length > 0) {
       url += `&q=${q}`
     }
 
-    if (Array.isArray(agencies)) {
+    if (some(agencies)) {
       agencies.forEach(agency => {
         url += `&agency.acronym=${agency}`
       })
     }
 
-    if (Array.isArray(usageTypes)) {
+    if (some(usageTypes)) {
       usageTypes.forEach(usageType => {
         url += `&permissions.usageType=${usageType}`
       })
     }
 
-    if (Array.isArray(languages)) {
+    if (some(languages)) {
       languages.forEach(language => {
         url += `&languages=${language}`
       })
     }
 
+    /*
+    will uncomment once api supports licenses
+    if (some(licenses)) {
+      licenses.forEach(license => {
+        url += `&licenses.name=${license}`
+      })
+    }
+    */
+
     if (this.debug) console.log('fetching url:', url)
 
-    return fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        console.log('data:', data)
-        if (Array.isArray(licenses) && licenses.length > 0) {
-          data.repos = data.repos.filter(repo => {
-            console.log('repo:', repo)
-            if (repo.permissions) {
-              if (Array.isArray(repo.permissions.licenses) && repo.permissions.licenses.length > 0) {
-                const repoLicenses = repo.permissions.licenses
-                console.log('repolicense:', repoLicenses)
-                const licenseNames = repoLicenses.map(license => license.name)
-                const licenseUrls = repoLicenses.map(license => license.URL)
-                return overlaps(licenseNames, licenses) || overlaps(licenseUrls, licenses)
-              }
-              return false
-            }
-            return false
-          })
-        }
-        return data
-      })
+    return fetch(url).then(response => response.json())
   }
 
   /**
