@@ -10,6 +10,25 @@ let client = new CodeGovAPIClient({
 
 describe('Getting Information', function() {
 
+  describe('Browsing', function() {
+    it('should get initial repos', function(done) {
+      this.timeout(5000)
+      const filters = {
+        agencies: [],
+        languages: [],
+        licenses: [],
+        size: 10,
+        usageTypes: []
+      }
+      client.repos(filters).then(results => {
+        console.log("initial browse results:", results)
+        const repos = results.repos || results.data;
+        expect(repos.length).to.equal(10);
+        done();
+      })
+    })
+  })
+
   describe('Searching', function() {
     it('should get suggestions for water', function(done) {
       this.timeout(50000);
@@ -92,5 +111,5 @@ describe('Getting Information', function() {
       });
     });
   });
-  
+
 });
