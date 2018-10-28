@@ -75,7 +75,8 @@ class CodeGovAPIClient {
    * });
    */
   getRepoById(repoId = '') {
-    const url = `${this.base}repos/${repoId}`
+    let url = `${this.base}repos/${repoId}`
+    if (this.api_key) url += `?api_key=${this.api_key}`
     return fetch(url).then(response => response.json())
   }
 
@@ -108,7 +109,7 @@ class CodeGovAPIClient {
   }
 
   repos(params) {
-    const { agencies, from, languages, licenses, q, size } = params
+    const { agencies, from, languages, licenses, q, sort, size } = params
     const usageTypes = params.usageTypes || this.usageTypes
 
     let url = `${this.base}repos?size=${size}&api_key=${this.api_key}`
@@ -147,6 +148,13 @@ class CodeGovAPIClient {
       })
     }
     */
+
+    if (sort) {
+      const sortNormalized = sort.toLowerCase().trim()
+      if (sortNormalized === 'a-z' || sortNormalized === 'name__asc') {
+        url += `&sort=name__asc`
+      }
+    }
 
     if (this.debug) console.log('fetching url:', url)
 

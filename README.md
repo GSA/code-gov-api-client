@@ -1,5 +1,5 @@
 # Alpha version
-This code is still being developed.  It should not be used in production.
+This code is still being developed.  It should not be used in production. It is prone to breaking changes.
 
 # code-gov-api-client
 Client for Interacting with Code.gov API
