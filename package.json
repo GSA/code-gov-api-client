@@ -1,6 +1,6 @@
 {
   "name": "@code.gov/api-client",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Client for Interacting with Code.gov API",
   "main": "dist/bundle.js",
   "scripts": {
@@ -62,7 +62,7 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
-    "@code.gov/cautious": "0.0.2",
+    "@code.gov/cautious": "0.2.1",
     "node-fetch": "^2.2.0"
   }
 }

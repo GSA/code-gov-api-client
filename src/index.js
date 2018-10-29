@@ -1,12 +1,15 @@
 const fetch = require('node-fetch')
-const { overlaps, some } = require('@code.gov/cautious')
+const { includes, lower, overlaps, some, trim } = require('@code.gov/cautious')
 
 class CodeGovAPIClient {
   constructor(options = {}) {
     console.log('constructing CodeGovAPIClient with this', this)
 
     this.base = options.base || 'https://api.code.gov/'
+    this.remember = options.remember || false
     this.debug = options.debug || false
+    this.tasksUrl = options.tasksUrl || 'https://raw.githubusercontent.com/GSA/code-gov-data/master/help-wanted.json'
+    this.cache = {}
     this.usageTypes = options.usageTypes || ['openSource', 'governmentWideReuse']
 
     if (options.api_key) {
@@ -178,6 +181,61 @@ class CodeGovAPIClient {
       return this.repos(params)
     }
     return Promise.resolve(null)
+  }
+
+
+  tasks(params) {
+    let { agencies, from, languages, skillLevels, size, timeRequired } = params || {}
+
+    // clean and normalize
+    agencies = trim(lower(agencies))
+    from = Number(size || 0)
+    languages = trim(lower(languages))
+    size = Number(size || 10)
+    skillLevels = trim(lower(skillLevels))
+    timeRequired = trim(lower(timeRequired))
+
+    const key = JSON.stringify({ agencies, languages, size, skillLevels, timeRequired })
+
+    if (this.cache.hasOwnProperty(key)) {
+      return Promise.resolve(this.cache[key])
+    } else {
+      return fetch(this.tasksUrl)
+        .then(response => response.json()).then(data => {
+          const result = {
+            tasks: []
+          }
+          const items = data.items
+          const count = items.length
+          for (let i = 0; i < count; i++) {
+            const task = items[i]
+            const effort = trim(lower(task.effort))
+            const skill = trim(lower(task.skill))
+
+            if(some(agencies) && !includes(agencies, task.agency.name)) {
+              return
+            }
+
+            if(some(languages) && !overlaps(languages, task.languages)) {
+              return
+            }
+
+            if(some(skillLevels) && !includes(skillLevels, skill)) {
+              return
+            }
+
+            if(some(timeRequired) && !includes(timeRequired, effort)) {
+              return
+            }
+
+            result.tasks.push(task)
+
+          }
+          result.total = result.tasks.length
+          result.tasks = result.tasks.slice(from, from + size)
+          return result
+        })
+    }
   }
 }
 
