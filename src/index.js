@@ -1,15 +1,17 @@
-const fetch = require('node-fetch')
+const { get } = require('axios')
 const { includes, lower, overlaps, some, trim } = require('@code.gov/cautious')
 
 class CodeGovAPIClient {
   constructor(options = {}) {
-    console.log('constructing CodeGovAPIClient with this', this)
-
     this.base = options.base || 'https://api.code.gov/'
     this.remember = options.remember || false
     this.debug = options.debug || false
     this.tasksUrl = options.tasksUrl || 'https://raw.githubusercontent.com/GSA/code-gov-data/master/help-wanted.json'
     this.cache = {}
+    this.count = 0
+    this.max = 1000 // the maximum number of requests over the lifetime of this api client
+    this.from = 0
+    this.size = 10
     this.usageTypes = options.usageTypes || ['openSource', 'governmentWideReuse']
 
     if (options.api_key) {
@@ -27,6 +29,20 @@ class CodeGovAPIClient {
     })
   }
 
+  getJSON(url){
+    if (this.cache.hasOwnProperty(url)) {
+      console.log(`[code-gov-api-client] returning data from cache for ${url}`)
+      return Promise.resolve(this.cache[url])
+    } else {
+      this.cache[url] = get(url).then(response => {
+        const data = response.data
+        this.cache[url] = data
+        return data
+      })
+      return this.cache[url]
+    }
+  }
+
   /**
    * This function gets agencies on code.gov, sorted by name
    * @name getAgencies
@@ -38,12 +54,12 @@ class CodeGovAPIClient {
    * });
    */
   getAgencies(size = 10) {
-    return fetch(`${this.base}agencies?api_key=${this.api_key}&size=${size}`)
-      .then(response => response.json())
-      .then(data => data.agencies)
-      .then(agencies => agencies.sort((a, b) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
-      }))
+    const url = `${this.base}agencies?api_key=${this.api_key}&size=${size}`
+    return get(url).then(response => {
+        return response.data.agencies.sort((a, b) => {
+          return (a.name || a.term).toLowerCase() < (b.name || b.term).toLowerCase() ? -1 : 1
+        })
+      })
   }
 
   /**
@@ -80,7 +96,7 @@ class CodeGovAPIClient {
   getRepoById(repoId = '') {
     let url = `${this.base}repos/${repoId}`
     if (this.api_key) url += `?api_key=${this.api_key}`
-    return fetch(url).then(response => response.json())
+    return get(url).then(response => response.data)
   }
 
   /**
@@ -102,9 +118,7 @@ class CodeGovAPIClient {
       let url = `${this.base}terms?term=${term}&size=${size}`
       if (this.api_key) url += `&api_key=${this.api_key}`
       if (this.debug) console.log('url:', url)
-      return fetch(url)
-        .then(response => response.json())
-        .then(data => data.terms)
+      return get(url).then(response => response.data.terms)
     }
     else {
       return Promise.resolve([])
@@ -112,17 +126,30 @@ class CodeGovAPIClient {
   }
 
   repos(params) {
-    const { agencies, from, languages, licenses, q, sort, size } = params
-    const usageTypes = params.usageTypes || this.usageTypes
+    let { agencies, from, languages, licenses, page, q, query, usageTypes, sort, size } = params || {}
+    agencies = trim(lower(agencies))
+    languages = trim(lower(languages))
+    licenses = trim(lower(licenses))
+    query = query || q
+    size = Number(size || this.size)
+    usageTypes = trim(lower(usageTypes)) || this.usageTypes
+
+    if (from) {
+      from = Number(from)
+    } else if (page) {
+      from = (page-1) * size
+    } else {
+      from = this.from
+    }
 
     let url = `${this.base}repos?size=${size}&api_key=${this.api_key}`
 
-    if (from && from.length > 0) {
+    if (from && from > 0) {
       url += `&from=${from}`
     }
 
-    if (q && q.length > 0) {
-      url += `&q=${q}`
+    if (query && query.length > 0) {
+      url += `&q=${query}`
     }
 
     if (some(agencies)) {
@@ -139,29 +166,30 @@ class CodeGovAPIClient {
 
     if (some(languages)) {
       languages.forEach(language => {
-        url += `&languages=${language}`
+        url += `&language=${language}`
       })
     }
 
-    /*
-    will uncomment once api supports licenses
     if (some(licenses)) {
       licenses.forEach(license => {
-        url += `&licenses.name=${license}`
+        url += `&license=${license}`
       })
     }
-    */
 
     if (sort) {
       const sortNormalized = sort.toLowerCase().trim()
       if (sortNormalized === 'a-z' || sortNormalized === 'name__asc') {
         url += `&sort=name__asc`
+      } else if (sortNormalized === 'last_update') {
+        url += `&sort=last_updated`
+      } else if (sortNormalized === 'data_quality') {
+        console.log("don't have to add data_quality as sort parameter because this is on by default")
       }
     }
 
     if (this.debug) console.log('fetching url:', url)
 
-    return fetch(url).then(response => response.json())
+    return this.getJSON(url)
   }
 
   /**
@@ -195,17 +223,17 @@ class CodeGovAPIClient {
     skillLevels = trim(lower(skillLevels))
     timeRequired = trim(lower(timeRequired))
 
-    const key = JSON.stringify({ agencies, languages, size, skillLevels, timeRequired })
+    const cacheKey = JSON.stringify({ agencies, languages, size, skillLevels, timeRequired })
 
-    if (this.cache.hasOwnProperty(key)) {
-      return Promise.resolve(this.cache[key])
+    if (this.cache.hasOwnProperty(cacheKey)) {
+      return Promise.resolve(this.cache[cacheKey])
     } else {
-      return fetch(this.tasksUrl)
-        .then(response => response.json()).then(data => {
+      return get(this.tasksUrl)
+        .then(response => {
           const result = {
             tasks: []
           }
-          const items = data.items
+          const items = response.data.items
           const count = items.length
           for (let i = 0; i < count; i++) {
             const task = items[i]
@@ -233,6 +261,7 @@ class CodeGovAPIClient {
           }
           result.total = result.tasks.length
           result.tasks = result.tasks.slice(from, from + size)
+          this.cache[cacheKey] = result
           return result
         })
     }

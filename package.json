@@ -1,6 +1,6 @@
 {
   "name": "@code.gov/api-client",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Client for Interacting with Code.gov API",
   "main": "dist/bundle.js",
   "scripts": {
@@ -63,6 +63,6 @@
   },
   "dependencies": {
     "@code.gov/cautious": "0.2.1",
-    "node-fetch": "^2.2.0"
+    "axios": "^0.18.0"
   }
 }
