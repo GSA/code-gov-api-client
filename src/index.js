@@ -1,6 +1,30 @@
 const { get } = require('axios')
 const { includes, lower, overlaps, some, trim } = require('@code.gov/cautious')
 
+function cleanLanguages(languages) {
+  const cleaned = []
+  if (Array.isArray(languages) && languages.length > 0) {
+    languages.forEach(language => {
+      if (typeof language === 'string') {
+        const trimmed = language.trim().toLowerCase()
+        if (trimmed.length > 0) {
+          if (!cleaned.includes(trimmed)) {
+            cleaned.push(trimmed)
+          }
+        }
+      }
+    })
+  }
+  return cleaned
+}
+
+function cleanRepo(repo) {
+  if (repo.languages) {
+    repo.languages = cleanLanguages(repo.languages)
+  }
+  return repo
+}
+
 class CodeGovAPIClient {
   constructor(options = {}) {
     this.base = options.base || 'https://api.code.gov/'
@@ -30,17 +54,10 @@ class CodeGovAPIClient {
   }
 
   getJSON(url){
-    if (this.cache.hasOwnProperty(url)) {
-      console.log(`[code-gov-api-client] returning data from cache for ${url}`)
-      return Promise.resolve(this.cache[url])
-    } else {
-      this.cache[url] = get(url).then(response => {
-        const data = response.data
-        this.cache[url] = data
-        return data
-      })
-      return this.cache[url]
+    if (!this.cache.hasOwnProperty(url)) {
+      this.cache[url] = get(url).then(response => response.data)
     }
+    return this.cache[url]
   }
 
   /**
@@ -189,7 +206,11 @@ class CodeGovAPIClient {
 
     if (this.debug) console.log('fetching url:', url)
 
-    return this.getJSON(url)
+    return this.getJSON(url).then(dirty => {
+      console.log('dirty:', dirty);
+      dirty.repos = dirty.repos.map(cleanRepo)
+      return dirty
+    })
   }
 
   /**

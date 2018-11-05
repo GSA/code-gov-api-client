@@ -1,6 +1,6 @@
 {
   "name": "@code.gov/api-client",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Client for Interacting with Code.gov API",
   "main": "dist/bundle.js",
   "scripts": {
