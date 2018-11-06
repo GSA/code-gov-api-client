@@ -98,6 +98,37 @@ class CodeGovAPIClient {
     return this.repos(filters)
   }
 
+  getCompliance() {
+    return this.getStatus().then(dirty => {
+      const { statuses } = dirty;
+      const data = Object.values(statuses)
+        .filter(value => value.requirements)
+        .map(value => {
+          const acronym = value.metadata.agency.acronym;
+          const name = value.metadata.agency.name;
+          const reqs = value.requirements;
+          return {
+            name,
+            acronym,
+            requirements: {
+              overall: reqs.overallCompliance,
+              sub: {
+                agencyWidePolicy: reqs.agencyWidePolicy,
+                openSourceRequirement: reqs.openSourceRequirement,
+                inventoryRequirement: reqs.inventoryRequirement,
+                schemaFormat: reqs.schemaFormat
+              }
+            }
+          }
+        })
+        .sort((a, b) => {
+          const pattern = /Department of( the)?/
+          return a.name.replace(pattern, "").toLowerCase() > b.name.replace(pattern, "").toLowerCase() ? 1 : -1
+        });
+      return data
+    })
+  }
+
   /**
    * This function gets a repository by its id
    * It is used on the project details page of code.gov.
@@ -230,6 +261,10 @@ class CodeGovAPIClient {
       return this.repos(params)
     }
     return Promise.resolve(null)
+  }
+
+  getStatus() {
+    return this.getJSON(`${this.base}status.json`)
   }
 
 
