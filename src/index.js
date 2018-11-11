@@ -269,58 +269,65 @@ class CodeGovAPIClient {
 
 
   tasks(params) {
-    let { agencies, from, languages, skillLevels, size, timeRequired } = params || {}
+    console.log("starting client tasks with", params)
+    let { agencies, categories, from, languages, page, skillLevels, size, timeRequired } = params || {}
 
     // clean and normalize
     agencies = trim(lower(agencies))
-    from = Number(size || 0)
+    categories = trim(lower(categories))
     languages = trim(lower(languages))
     size = Number(size || 10)
     skillLevels = trim(lower(skillLevels))
     timeRequired = trim(lower(timeRequired))
 
-    const cacheKey = JSON.stringify({ agencies, languages, size, skillLevels, timeRequired })
-
-    if (this.cache.hasOwnProperty(cacheKey)) {
-      return Promise.resolve(this.cache[cacheKey])
+    if (from) {
+      from = Number(from)
+    } else if (page) {
+      from = (page-1) * size
     } else {
-      return get(this.tasksUrl)
-        .then(response => {
-          const result = {
-            tasks: []
-          }
-          const items = response.data.items
-          const count = items.length
-          for (let i = 0; i < count; i++) {
-            const task = items[i]
-            const effort = trim(lower(task.effort))
-            const skill = trim(lower(task.skill))
-
-            if(some(agencies) && !includes(agencies, task.agency.name)) {
-              return
-            }
-
-            if(some(languages) && !overlaps(languages, task.languages)) {
-              return
-            }
-
-            if(some(skillLevels) && !includes(skillLevels, skill)) {
-              return
-            }
-
-            if(some(timeRequired) && !includes(timeRequired, effort)) {
-              return
-            }
-
-            result.tasks.push(task)
-
-          }
-          result.total = result.tasks.length
-          result.tasks = result.tasks.slice(from, from + size)
-          this.cache[cacheKey] = result
-          return result
-        })
+      from = this.from
     }
+
+    return this.getJSON(this.tasksUrl)
+      .then(data => {
+        const result = {
+          tasks: []
+        }
+        const items = data.items
+        const count = items.length
+        for (let i = 0; i < count; i++) {
+          const task = items[i]
+          const effort = trim(lower(task.effort))
+          const skill = trim(lower(task.skill))
+
+          if(some(agencies) && !includes(agencies, trim(lower(task.agency.acronym)))) {
+            continue
+          }
+
+          if(some(categories) && !includes(categories, trim(lower(task.type)))) {
+            continue
+          }
+
+          if(some(languages) && !overlaps(languages, trim(lower(task.languages)))) {
+            continue
+          }
+
+          if(some(skillLevels) && !includes(skillLevels, skill)) {
+            continue
+          }
+
+          if(some(timeRequired) && !includes(timeRequired, effort)) {
+            continue
+          }
+
+          result.tasks.push(task)
+
+        }
+        result.total = result.tasks.length
+        console.log("slicing from ", from, "with size", size)
+        result.tasks = result.tasks.slice(from, from + size)
+        return result
+      })
   }
 }
 
