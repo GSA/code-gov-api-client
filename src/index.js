@@ -144,7 +144,15 @@ class CodeGovAPIClient {
   getRepoById(repoId = '') {
     let url = `${this.base}repos/${repoId}`
     if (this.api_key) url += `?api_key=${this.api_key}`
-    return get(url).then(response => response.data)
+    return get(url).then(response => {
+      const { data } = response
+      // if the response is returned as an array
+      if (some(data)) {
+        return data[0]
+      } else {
+        return data
+      }
+    })
   }
 
   /**
