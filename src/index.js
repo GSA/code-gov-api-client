@@ -27,7 +27,7 @@ function cleanRepo(repo) {
 
 class CodeGovAPIClient {
   constructor(options = {}) {
-    this.base = options.base || 'https://api.code.gov/'
+    this._base = options.base || 'https://api.code.gov/'
     this.remember = options.remember || false
     this.debug = options.debug || false
     this.tasksUrl = options.tasksUrl || 'https://raw.githubusercontent.com/GSA/code-gov-data/master/help-wanted.json'
@@ -71,7 +71,7 @@ class CodeGovAPIClient {
    * });
    */
   getAgencies(size = 10) {
-    const url = `${this.base}agencies?api_key=${this.api_key}&size=${size}`
+    const url = `${this._base}agencies?api_key=${this.api_key}&size=${size}`
     return get(url).then(response => {
         return response.data.agencies.sort((a, b) => {
           return (a.name || a.term).toLowerCase() < (b.name || b.term).toLowerCase() ? -1 : 1
@@ -142,10 +142,9 @@ class CodeGovAPIClient {
    * });
    */
   getRepoById(repoId = '') {
-    let url = `${this.base}repos/${repoId}`
+    let url = `${this._base}repos/${repoId}`
     if (this.api_key) url += `?api_key=${this.api_key}`
-    return get(url).then(response => {
-      const { data } = response
+    return this.getJSON(url).then(data => {
       // if the response is returned as an array
       if (some(data)) {
         return data[0]
@@ -171,10 +170,11 @@ class CodeGovAPIClient {
    */
   suggest(term = '', size = 10) {
     if (term && term.length > 2) {
-      let url = `${this.base}terms?term=${term}&size=${size}`
+      let url = `${this._base}terms?term=${term}&size=${size}`
       if (this.api_key) url += `&api_key=${this.api_key}`
       if (this.debug) console.log('url:', url)
-      return get(url).then(response => response.data.terms)
+      return this.getJSON(url)
+        .then(data => data.terms.map(term => term.term))
     }
     else {
       return Promise.resolve([])
@@ -198,7 +198,7 @@ class CodeGovAPIClient {
       from = this.from
     }
 
-    let url = `${this.base}repos?size=${size}&api_key=${this.api_key}`
+    let url = `${this._base}repos?size=${size}&api_key=${this.api_key}`
 
     if (from && from > 0) {
       url += `&from=${from}`
@@ -246,7 +246,6 @@ class CodeGovAPIClient {
     if (this.debug) console.log('fetching url:', url)
 
     return this.getJSON(url).then(dirty => {
-      console.log('dirty:', dirty);
       dirty.repos = dirty.repos.map(cleanRepo)
       return dirty
     })
@@ -272,7 +271,7 @@ class CodeGovAPIClient {
   }
 
   getStatus() {
-    return this.getJSON(`${this.base}status.json`)
+    return this.getJSON(`${this._base}status.json`)
   }
 
 

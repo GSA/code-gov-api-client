@@ -5,7 +5,7 @@ let CodeGovAPIClient = require("../src/index.js").CodeGovAPIClient;
 let client = new CodeGovAPIClient({
   api_key: process.env.CODE_GOV_API_KEY,
   base: process.env.CODE_GOV_API_BASE,
-  debug: true
+  debug: false
 });
 
 describe('Getting Information', function() {
@@ -70,7 +70,7 @@ describe('Getting Information', function() {
         this.timeout(50000);
         client.suggest("National").then(searchResults => {
           expect(searchResults.length).to.be.above(2);
-          expect(searchResults[0].term.toLowerCase()).to.have.string('national');
+          expect(searchResults[0].toLowerCase()).to.have.string('national');
           done();
         });
     });
@@ -89,8 +89,9 @@ describe('Getting Information', function() {
   describe("Getting Individual Repositories", function() {
     it("should get correct result", function(done) {
       this.timeout(50000);
-      let repoId = "cfpb_new_clouseau_";
-      client.getRepoById(repoId).then(repo => {
+      let repoID = "doe_sandia_national_laboratories_snl_water_network_tool_for_resilience_v_1_0";
+      client.getRepoById(repoID).then(repo => {
+        expect(repo.repoID).to.equal(repoID)
         done();
       });
     });
