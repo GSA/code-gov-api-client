@@ -62,7 +62,7 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
-    "@code.gov/cautious": "0.2.1",
+    "@code.gov/cautious": "0.3.0",
     "axios": "^0.18.0"
   }
 }
