@@ -188,7 +188,7 @@ class CodeGovAPIClient {
     licenses = trim(lower(licenses))
     query = query || q
     size = Number(size || this.size)
-    usageTypes = trim(lower(usageTypes)) || this.usageTypes
+    usageTypes = some(usageTypes) ? trim(lower(usageTypes)) : this.usageTypes
 
     if (from) {
       from = Number(from)
