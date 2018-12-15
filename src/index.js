@@ -295,7 +295,11 @@ class CodeGovAPIClient {
       from = this.from
     }
 
-    let url = this.tasksUrl + `?size=${size}`
+    let url = this.tasksUrl
+
+    //temporary until can filter with API
+    url += `?size=10000`
+
     if (this.api_key) url += `&api_key=${this.api_key}`
 
     return this.getJSON(url)
