@@ -30,7 +30,7 @@ class CodeGovAPIClient {
     this._base = options.base || 'https://api.code.gov/'
     this.remember = options.remember || false
     this.debug = options.debug || false
-    this.tasksUrl = options.tasksUrl || 'https://raw.githubusercontent.com/GSA/code-gov-data/master/help-wanted.json'
+    this.tasksUrl = options.tasksUrl || 'https://api.code.gov/open-tasks'
     this.cache = {}
     this.count = 0
     this.max = 1000 // the maximum number of requests over the lifetime of this api client
@@ -295,7 +295,10 @@ class CodeGovAPIClient {
       from = this.from
     }
 
-    return this.getJSON(this.tasksUrl)
+    let url = this.tasksUrl + `?size=${size}`
+    if (this.api_key) url += `&api_key=${this.api_key}`
+
+    return this.getJSON(url)
       .then(data => {
         const result = {
           tasks: []

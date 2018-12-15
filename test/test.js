@@ -107,4 +107,23 @@ describe('Getting Information', function() {
     });
   });
 
+  describe("Getting Tasks", function() {
+    this.timeout(3000);
+    it("should get 10 open tasks by default", function(done) {
+      client.tasks().then(data => {
+        console.log("data:", data);
+        expect(data.tasks.length).to.equal(10);
+        done();
+      });
+    });
+
+    it("should get all open tasks", function(done) {
+      client.tasks({ size: 10000 }).then(data => {
+        expect(data.tasks.length).to.be.above(10);
+        done();
+      });
+    });
+
+  });
+
 });
