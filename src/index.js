@@ -236,8 +236,8 @@ class CodeGovAPIClient {
       const sortNormalized = sort.toLowerCase().trim()
       if (sortNormalized === 'a-z' || sortNormalized === 'name__asc') {
         url += `&sort=name__asc`
-      } else if (sortNormalized === 'last_update') {
-        url += `&sort=last_updated`
+      } else if (sortNormalized === 'last_updated') {
+        url += `&sort=lastModified__desc`
       } else if (sortNormalized === 'data_quality') {
         console.log("don't have to add data_quality as sort parameter because this is on by default")
       }
