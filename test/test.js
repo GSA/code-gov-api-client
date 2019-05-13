@@ -50,7 +50,19 @@ describe('Getting Information', function() {
       });
     });
 
-    it('should filter repos properly by language', function(done) {
+    it('should filter repos properly when language is C', function(done) {
+      this.timeout(3000);
+      const filters = {
+        languages: ['C']
+      };
+      client.repos(filters).then(results => {
+        const repos = results.repos || results.data;
+        expect(repos[0].languages).to.include('c');
+        done();
+      })
+    });
+
+    it('should filter repos properly when language is C#', function(done) {
       this.timeout(3000);
       const filters = {
         languages: ['C#']
@@ -58,6 +70,18 @@ describe('Getting Information', function() {
       client.repos(filters).then(results => {
         const repos = results.repos || results.data;
         expect(repos[0].languages).to.include('c#');
+        done();
+      })
+    });
+
+    it('should filter repos properly when language is C++', function(done) {
+      this.timeout(3000);
+      const filters = {
+        languages: ['C++']
+      };
+      client.repos(filters).then(results => {
+        const repos = results.repos || results.data;
+        expect(repos[0].languages).to.include('c++');
         done();
       })
     });
