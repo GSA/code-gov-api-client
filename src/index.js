@@ -222,7 +222,7 @@ class CodeGovAPIClient {
 
     if (some(languages)) {
       languages.forEach(language => {
-        url += `&language=${language}`
+        url += `&language=${encodeURIComponent(language)}`
       })
     }
 
