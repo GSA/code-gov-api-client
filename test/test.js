@@ -50,6 +50,42 @@ describe('Getting Information', function() {
       });
     });
 
+    it('should filter repos properly when language is C', function(done) {
+      this.timeout(3000);
+      const filters = {
+        languages: ['C']
+      };
+      client.repos(filters).then(results => {
+        const repos = results.repos || results.data;
+        expect(repos[0].languages).to.include('c');
+        done();
+      })
+    });
+
+    it('should filter repos properly when language is C#', function(done) {
+      this.timeout(3000);
+      const filters = {
+        languages: ['C#']
+      };
+      client.repos(filters).then(results => {
+        const repos = results.repos || results.data;
+        expect(repos[0].languages).to.include('c#');
+        done();
+      })
+    });
+
+    it('should filter repos properly when language is C++', function(done) {
+      this.timeout(3000);
+      const filters = {
+        languages: ['C++']
+      };
+      client.repos(filters).then(results => {
+        const repos = results.repos || results.data;
+        expect(repos[0].languages).to.include('c++');
+        done();
+      })
+    });
+
     it('should filter agencies properly by agency', function(done) {
       this.timeout(3000);
       const filters = {
@@ -89,7 +125,7 @@ describe('Getting Information', function() {
   describe("Getting Individual Repositories", function() {
     it("should get correct result", function(done) {
       this.timeout(3000);
-      let repoID = "doe_sandia_national_laboratories_snl_water_network_tool_for_resilience_v_1_0";
+      let repoID = "gsa_18f_1_peace_corps_infrastructure";
       client.getRepoById(repoID).then(repo => {
         expect(repo.repoID).to.equal(repoID)
         done();
