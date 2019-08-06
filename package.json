@@ -46,7 +46,7 @@
     "clean-webpack-plugin": "^0.1.19",
     "cname-webpack-plugin": "^1.0.3",
     "copy-webpack-plugin": "^4.5.2",
-    "documentation": "^5.3.5",
+    "documentation": "^11.0.0",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
