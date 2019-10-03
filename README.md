@@ -11,3 +11,9 @@ npm install '@code.gov/api-client';
 
 # docs
 https://gsa.github.io/code-gov-api-client/
+
+# Questions?
+Twitter: [@CodeDotGov](https://twitter.com/CodeDotGov)  
+Email: [code@gsa.gov](mailto:code@gsa.gov)  
+LinkedIn: [code-gov](https://www.linkedin.com/company/code-gov)  
+Join our #opensource-public Slack channel: <https://chat.18f.gov/>  
