@@ -25,6 +25,15 @@ function cleanRepo(repo) {
   return repo
 }
 
+/**
+ * Construct an API object.
+ * @param {Object} [options={}] - API Options
+ * @param {string} options.api_key - API Key.  Get one at https://developers.code.gov/key.html
+ * @param {string} [options.base=https://api.code.gov/] - Base API Url
+ * @param {string} [options.tasksUrl=https://api.code.gov/open-tasks] - Open Tasks API Url
+ * @param {string[]} [options.usageTypes=['openSource', 'governmentWideReuse']] - Default repo permissions to filter for
+ * @param {boolean} [options.debug=false] - If true, output fetch urls on some functions
+ */
 class CodeGovAPIClient {
   constructor(options = {}) {
     this._base = options.base || 'https://api.code.gov/'

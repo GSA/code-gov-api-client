@@ -4,6 +4,6 @@ toc:
  - name: functions
  - getAgencies
  - getAgencyRepos
- - getRepoByID
+ - getRepoById
  - search
  - suggest
