@@ -1,6 +1,6 @@
 {
   "name": "@code.gov/api-client",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "description": "Client for Interacting with Code.gov API",
   "main": "dist/bundle.js",
   "scripts": {
@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/GSA/code-gov-api-client#readme",
   "devDependencies": {
+    "acorn": "^6.4.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
